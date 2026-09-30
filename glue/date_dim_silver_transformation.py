@@ -9,7 +9,7 @@ from awsgluedq.transforms import EvaluateDataQuality
 from awsglue.dynamicframe import DynamicFrame
 from awsglue import DynamicFrame
 
-# Script generated for node date_key conversion to date type
+# script generated for node date_key conversion to date type
 def MyTransform(glueContext, dfc) -> DynamicFrameCollection:
     from pyspark.sql.functions import to_date
     from awsglue.dynamicframe import DynamicFrame
