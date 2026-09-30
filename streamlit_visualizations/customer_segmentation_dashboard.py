@@ -316,6 +316,166 @@ with center:
         use_container_width=True
     )
 
+
+######## Loyalty Program Impact Dashboard ########
+
+import plotly.graph_objects as go
+
+st.header("Loyalty Program Impact Dashboard")
+
+query_loyalty = """
+SELECT
+    user_id,
+    is_loyalty,
+    avg_spend,
+    repeat_orders,
+    lifetime_value
+FROM business_insights_gold_db.metric5_loyalty_program_impact
+"""
+
+df_loyalty = pd.read_sql(query_loyalty, conn)
+
+df_loyalty["loyalty_status"] = df_loyalty["is_loyalty"].map({
+    True: "Loyalty Member",
+    False: "Non-Loyalty Member"
+})
+
+
+# Use median because the data contains extreme outliers
+summary = (
+    df_loyalty
+    .groupby("loyalty_status")
+    .agg(
+        avg_spend=("avg_spend", "median"),
+        repeat_orders=("repeat_orders", "median"),
+        lifetime_value=("lifetime_value", "median")
+    )
+)
+
+
+metrics = [
+    "Average Spend",
+    "Repeat Orders",
+    "Lifetime Value"
+]
+
+columns = [
+    "avg_spend",
+    "repeat_orders",
+    "lifetime_value"
+]
+
+
+# Normalize each metric to 0-100
+normalized = summary.copy()
+
+for col in columns:
+    max_value = summary[col].max()
+
+    if max_value > 0:
+        normalized[col] = summary[col] / max_value * 100
+
+
+fig = go.Figure()
+
+
+# Loyalty Member
+fig.add_trace(
+    go.Scatter(
+        x=metrics,
+
+        y=[
+            normalized.loc["Loyalty Member", "avg_spend"],
+            normalized.loc["Loyalty Member", "repeat_orders"],
+            normalized.loc["Loyalty Member", "lifetime_value"]
+        ],
+
+        mode="lines+markers",
+
+        marker=dict(size=14),
+
+        line=dict(width=3),
+
+        name="Loyalty Member",
+
+        text=[
+            f"${summary.loc['Loyalty Member', 'avg_spend']:,.2f}",
+            f"{summary.loc['Loyalty Member', 'repeat_orders']:,.1f}",
+            f"${summary.loc['Loyalty Member', 'lifetime_value']:,.2f}"
+        ],
+
+        hovertemplate=(
+            "<b>%{x}</b><br>"
+            "Loyalty Member<br>"
+            "Actual Value: %{text}"
+            "<extra></extra>"
+        )
+    )
+)
+
+
+# Non-Loyalty Member
+fig.add_trace(
+    go.Scatter(
+        x=metrics,
+
+        y=[
+            normalized.loc["Non-Loyalty Member", "avg_spend"],
+            normalized.loc["Non-Loyalty Member", "repeat_orders"],
+            normalized.loc["Non-Loyalty Member", "lifetime_value"]
+        ],
+
+        mode="lines+markers",
+
+        marker=dict(size=14),
+
+        line=dict(width=3),
+
+        name="Non-Loyalty Member",
+
+        text=[
+            f"${summary.loc['Non-Loyalty Member', 'avg_spend']:,.2f}",
+            f"{summary.loc['Non-Loyalty Member', 'repeat_orders']:,.1f}",
+            f"${summary.loc['Non-Loyalty Member', 'lifetime_value']:,.2f}"
+        ],
+
+        hovertemplate=(
+            "<b>%{x}</b><br>"
+            "Non-Loyalty Member<br>"
+            "Actual Value: %{text}"
+            "<extra></extra>"
+        )
+    )
+)
+
+
+fig.update_layout(
+    title="Loyalty vs Non-Loyalty Customer Behavior",
+
+    height=450,
+
+    xaxis_title="Customer Behavior Metric",
+
+    yaxis=dict(
+        title="Relative Performance (%)",
+        range=[0, 110]
+    ),
+
+    legend_title="Customer Type",
+
+    hovermode="x unified"
+)
+
+
+left, center, right = st.columns([1, 5, 1])
+
+with center:
+    st.plotly_chart(
+        fig,
+        use_container_width=True
+    )
+
+
 ######## Location Performance Dashboard ########
 
 st.header("Location Performance Dashboard")
