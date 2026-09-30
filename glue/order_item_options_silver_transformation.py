@@ -28,7 +28,7 @@ DEFAULT_DATA_QUALITY_RULESET = """
     ]
 """
 
-# Script generated for node Amazon S3
+# Script generated for node Amazon S3 bucket
 AmazonS3_node1790317274656 = glueContext.create_dynamic_frame.from_options(format_options={}, connection_type="s3", format="parquet", connection_options={"paths": ["s3://business-insights-project/bronze/order_item_options/"], "recurse": True}, transformation_ctx="AmazonS3_node1790317274656")
 
 # Script generated for node Drop Duplicates
