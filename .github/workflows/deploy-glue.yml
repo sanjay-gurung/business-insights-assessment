@@ -1,0 +1,41 @@
+name: Deploy AWS Glue Pipeline
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "glue/**"
+      - ".github/workflows/deploy-glue.yml"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-2
+
+      - name: Deploy Glue scripts to S3
+        run: |
+          aws s3 cp glue/business_insights_sql_ingestion.py \
+            s3://aws-glue-assets-951411651540-us-east-2/scripts/business_insights_sql_ingestion.py
+
+          aws s3 cp glue/order_items_silver_transformation.py \
+            s3://aws-glue-assets-951411651540-us-east-2/scripts/order_items_silver_transformation.py
+
+          aws s3 cp glue/order_item_options_silver_transformation.py \
+            s3://aws-glue-assets-951411651540-us-east-2/scripts/order_item_options_silver_transformation.py
+
+          aws s3 cp glue/date_dim_silver_transformation.py \
+            s3://aws-glue-assets-951411651540-us-east-2/scripts/date_dim_silver_transformation.py
+
+          aws s3 cp glue/business_insights_gold_metrics_merge.py \
+            s3://aws-glue-assets-951411651540-us-east-2/scripts/business_insights_gold_metrics_merge.py
