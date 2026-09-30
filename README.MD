@@ -1,1 +1,1 @@
-Business insights assessment project
+Business insights assessment project.
