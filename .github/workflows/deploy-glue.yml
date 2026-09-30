@@ -3,7 +3,7 @@ name: Deploy AWS Glue Pipeline
 on:
   push:
     branches:
-      - main
+      - master
     paths:
       - "glue/**"
       - ".github/workflows/deploy-glue.yml"
