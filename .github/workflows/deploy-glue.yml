@@ -8,7 +8,7 @@ on:
       - "glue/**"
       - ".github/workflows/deploy-glue.yml"
 
-  # Allows us to run the workflow manually from GitHub Actions
+  # Allows manual execution from GitHub Actions
   workflow_dispatch:
 
 jobs:
@@ -42,3 +42,8 @@ jobs:
 
           aws s3 cp glue/business_insights_gold_metrics_merge.py \
             s3://aws-glue-assets-951411651540-us-east-2/scripts/business_insights_gold_metrics_merge.py
+
+      - name: Start Glue orchestration workflow
+        run: |
+          aws glue start-workflow-run \
+            --name business-insights-workflow
