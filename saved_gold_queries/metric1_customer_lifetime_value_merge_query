@@ -1,0 +1,136 @@
+MERGE INTO business_insights_gold_db.metric1_customer_lifetime_value AS target
+
+USING (
+
+    WITH item_revenue_by_order AS (
+        SELECT
+            user_id,
+            order_id,
+            SUM(item_price * item_quantity) AS item_revenue
+        FROM business_insights_silver_db.order_items_transformed
+        WHERE TRIM(user_id) <> ''
+        GROUP BY
+            user_id,
+            order_id
+    ),
+
+    option_revenue_by_order AS (
+        SELECT
+            order_id,
+            SUM(option_price * option_quantity) AS option_revenue
+        FROM business_insights_silver_db.order_item_options_transformed
+        GROUP BY
+            order_id
+    ),
+
+    order_revenue AS (
+        SELECT
+            i.user_id,
+            i.order_id,
+            i.item_revenue,
+            COALESCE(o.option_revenue, 0) AS option_revenue,
+            i.item_revenue + COALESCE(o.option_revenue, 0) AS total_order_revenue
+        FROM item_revenue_by_order i
+        LEFT JOIN option_revenue_by_order o
+            ON i.order_id = o.order_id
+    ),
+
+    customer_clv AS (
+        SELECT
+            user_id,
+            COUNT(DISTINCT order_id) AS total_orders,
+            SUM(item_revenue) AS total_item_revenue,
+            SUM(option_revenue) AS total_option_revenue,
+            SUM(total_order_revenue) AS customer_lifetime_value
+        FROM order_revenue
+        GROUP BY
+            user_id
+    ),
+
+    clv_ranked AS (
+        SELECT
+            user_id,
+            total_orders,
+            total_item_revenue,
+            total_option_revenue,
+            customer_lifetime_value,
+
+            NTILE(5) OVER (
+                ORDER BY customer_lifetime_value DESC, user_id
+            ) AS clv_percentile_group
+
+        FROM customer_clv
+    )
+
+    SELECT
+        user_id,
+        total_orders,
+        ROUND(total_item_revenue, 2) AS total_item_revenue,
+        ROUND(total_option_revenue, 2) AS total_option_revenue,
+        ROUND(customer_lifetime_value, 2) AS customer_lifetime_value,
+
+        CASE
+            WHEN clv_percentile_group = 1 THEN 'High CLV'
+            WHEN clv_percentile_group IN (2, 3, 4) THEN 'Medium CLV'
+            WHEN clv_percentile_group = 5 THEN 'Low CLV'
+        END AS clv_segment,
+
+        CAST(CURRENT_TIMESTAMP AS TIMESTAMP) AS gold_updated_at
+
+    FROM clv_ranked
+
+) AS source
+
+ON target.user_id = source.user_id
+
+
+WHEN MATCHED AND (
+
+       target.total_orders
+           IS DISTINCT FROM source.total_orders
+
+    OR target.total_item_revenue
+           IS DISTINCT FROM source.total_item_revenue
+
+    OR target.total_option_revenue
+           IS DISTINCT FROM source.total_option_revenue
+
+    OR target.customer_lifetime_value
+           IS DISTINCT FROM source.customer_lifetime_value
+
+    OR target.clv_segment
+           IS DISTINCT FROM source.clv_segment
+
+)
+
+THEN UPDATE SET
+
+    total_orders = source.total_orders,
+    total_item_revenue = source.total_item_revenue,
+    total_option_revenue = source.total_option_revenue,
+    customer_lifetime_value = source.customer_lifetime_value,
+    clv_segment = source.clv_segment,
+    gold_updated_at = source.gold_updated_at
+
+
+WHEN NOT MATCHED THEN
+
+    INSERT (
+        user_id,
+        total_orders,
+        total_item_revenue,
+        total_option_revenue,
+        customer_lifetime_value,
+        clv_segment,
+        gold_updated_at
+    )
+
+    VALUES (
+        source.user_id,
+        source.total_orders,
+        source.total_item_revenue,
+        source.total_option_revenue,
+        source.customer_lifetime_value,
+        source.clv_segment,
+        source.gold_updated_at
+    );
