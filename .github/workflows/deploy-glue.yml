@@ -8,6 +8,9 @@ on:
       - "glue/**"
       - ".github/workflows/deploy-glue.yml"
 
+  # Allows us to run the workflow manually from GitHub Actions
+  workflow_dispatch:
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
