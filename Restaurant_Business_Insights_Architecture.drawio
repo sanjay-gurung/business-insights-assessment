@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-09-21T21:55:00.000Z" agent="ChatGPT" version="24.7.17">
+  <diagram id="restaurant-pipeline" name="Architecture">
+    <mxGraphModel dx="1920" dy="1080" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Restaurant Business Insights – Data Pipeline (AWS)" style="text;html=1;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=24;fontStyle=1;fontColor=#0B1F33;" vertex="1" parent="1">
+      <mxGeometry x="300" y="20" width="1100" height="50" as="geometry"/>
+    </mxCell><mxCell id="sql" value="&lt;b&gt;SQL Server&lt;/b&gt;&lt;br&gt;&lt;br&gt;order_items&lt;br&gt;order_item_options&lt;br&gt;date_dim" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF4FF;strokeColor=#1976D2;strokeWidth=2;fontSize=14;fontStyle=1;" vertex="1" parent="1">
+      <mxGeometry x="30" y="120" width="175" height="145" as="geometry"/>
+    </mxCell><mxCell id="glue_ing" value="&lt;b&gt;AWS Glue&lt;/b&gt;&lt;br&gt;Ingestion&lt;br&gt;(PySpark)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0E7FF;strokeColor=#7C4DFF;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="250" y="120" width="165" height="145" as="geometry"/>
+    </mxCell><mxCell id="bronze" value="&lt;b&gt;S3 – Bronze&lt;/b&gt;&lt;br&gt;Raw Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECF8EC;strokeColor=#43A047;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="455" y="120" width="165" height="145" as="geometry"/>
+    </mxCell><mxCell id="glue_trans" value="&lt;b&gt;AWS Glue&lt;/b&gt;&lt;br&gt;Transformation&lt;br&gt;(PySpark)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0E7FF;strokeColor=#7C4DFF;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="665" y="120" width="165" height="145" as="geometry"/>
+    </mxCell><mxCell id="silver" value="&lt;b&gt;S3 – Silver&lt;/b&gt;&lt;br&gt;Cleaned Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECF8EC;strokeColor=#43A047;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="870" y="120" width="165" height="145" as="geometry"/>
+    </mxCell><mxCell id="glue_metrics" value="&lt;b&gt;AWS Glue&lt;/b&gt;&lt;br&gt;Business Metrics&lt;br&gt;(PySpark)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0E7FF;strokeColor=#7C4DFF;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="1080" y="120" width="165" height="145" as="geometry"/>
+    </mxCell><mxCell id="gold" value="&lt;b&gt;S3 – Gold&lt;/b&gt;&lt;br&gt;Analytics Data&lt;br&gt;(CLV, RFM, etc.)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECF8EC;strokeColor=#43A047;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="1285" y="120" width="165" height="145" as="geometry"/>
+    </mxCell><mxCell id="athena" value="&lt;b&gt;Amazon Athena&lt;/b&gt;&lt;br&gt;Query Data" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0E7FF;strokeColor=#7C4DFF;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="1495" y="120" width="165" height="145" as="geometry"/>
+    </mxCell><mxCell id="streamlit" value="&lt;b&gt;Streamlit&lt;/b&gt;&lt;br&gt;Dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EAF4FF;strokeColor=#2196F3;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="1700" y="120" width="165" height="145" as="geometry"/>
+    </mxCell><mxCell id="e_main_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="sql" target="glue_ing">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_main_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="glue_ing" target="bronze">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_main_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="bronze" target="glue_trans">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_main_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="glue_trans" target="silver">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_main_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="silver" target="glue_metrics">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_main_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="glue_metrics" target="gold">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_main_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="gold" target="athena">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_main_7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="athena" target="streamlit">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="event" value="&lt;b&gt;Amazon EventBridge&lt;/b&gt;&lt;br&gt;Daily Schedule" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF0F0;strokeColor=#EF5350;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="180" y="360" width="250" height="85" as="geometry"/>
+    </mxCell><mxCell id="workflow" value="&lt;b&gt;AWS Glue Workflow&lt;/b&gt;&lt;br&gt;Orchestration" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF4E5;strokeColor=#FB8C00;strokeWidth=2;fontSize=14;" vertex="1" parent="1">
+      <mxGeometry x="520" y="360" width="260" height="85" as="geometry"/>
+    </mxCell><mxCell id="e_event_workflow" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="event" target="workflow">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_wf_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="workflow" target="glue_ing">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_wf_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="workflow" target="glue_trans">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_wf_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="workflow" target="glue_metrics">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="secrets" value="&lt;b&gt;AWS Secrets Manager&lt;/b&gt;&lt;br&gt;SQL Server credentials" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F9FC;strokeColor=#90A4AE;strokeWidth=1.5;dashed=1;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="950" y="355" width="240" height="90" as="geometry"/>
+    </mxCell><mxCell id="kms" value="&lt;b&gt;AWS KMS&lt;/b&gt;&lt;br&gt;S3 encryption" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F9FC;strokeColor=#90A4AE;strokeWidth=1.5;dashed=1;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="1240" y="355" width="210" height="90" as="geometry"/>
+    </mxCell><mxCell id="e_secrets" value="Credentials" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="secrets" target="glue_ing">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_kms_0" value="Encryption" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="kms" target="bronze">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_kms_1" value="Encryption" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="kms" target="silver">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_kms_2" value="Encryption" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="kms" target="gold">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="github" value="&lt;b&gt;GitHub&lt;/b&gt;&lt;br&gt;Source Code" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F9FC;strokeColor=#90A4AE;strokeWidth=1.5;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="180" y="535" width="210" height="80" as="geometry"/>
+    </mxCell><mxCell id="gha" value="&lt;b&gt;GitHub Actions&lt;/b&gt;&lt;br&gt;CI/CD" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F7F9FC;strokeColor=#90A4AE;strokeWidth=1.5;fontSize=13;" vertex="1" parent="1">
+      <mxGeometry x="470" y="535" width="220" height="80" as="geometry"/>
+    </mxCell><mxCell id="e_git_gha" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=block;endFill=1;strokeWidth=2;" edge="1" parent="1" source="github" target="gha">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_gha_0" value="Deploy PySpark" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="gha" target="glue_ing">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_gha_1" value="Deploy PySpark" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="gha" target="glue_trans">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell><mxCell id="e_gha_2" value="Deploy PySpark" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;strokeWidth=1.5;dashed=1;" edge="1" parent="1" source="gha" target="glue_metrics">
+      <mxGeometry relative="1" as="geometry"/>
+    </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
